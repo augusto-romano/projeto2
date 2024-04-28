@@ -1,21 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'user_form.dart';
-
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      routes: {
-        '/user_form': (context) => UserForm(), // Rota para a tela UserForm
-      },
-      home: LoginPage(),
-    );
-  }
-}
+import 'package:flutter/services.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -27,17 +12,40 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  // Função para validar as credenciais
+  Map<String, dynamic> _credentials = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCredentials();
+  }
+
+  Future<void> _loadCredentials() async {
+    try {
+      String data = await rootBundle.loadString('assets/credentials.json');
+      setState(() {
+        _credentials = json.decode(data);
+      });
+    } catch (e) {
+      print('Failed to load credentials: $e');
+    }
+  }
+
   bool _validateCredentials() {
-    // Validação de usuário e senha (apenas para exemplo)
-    return _usernameController.text == 'admin' &&
-        _passwordController.text == 'admin123';
+    String username = _usernameController.text.trim();
+    String password = _passwordController.text.trim();
+
+    if (username == _credentials['username'] &&
+        password == _credentials['password']) {
+      return true;
+    }
+
+    return false;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue,
       body: Center(
         child: SingleChildScrollView(
           child: Padding(
@@ -48,7 +56,7 @@ class _LoginPageState extends State<LoginPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'INSTITUTO CARDIOLOGIO DE OURINHOS', // Texto acima da imagem
+                    'INSTITUTO CARDIOLOGIO DE OURINHOS',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20,
@@ -60,12 +68,12 @@ class _LoginPageState extends State<LoginPage> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 20.0),
                     child: Image.asset(
-                      'assets/logoico2.png', // Insira o caminho para a imagem da logo
+                      'assets/logoico2.png',
                       height: 150,
                     ),
                   ),
                   Text(
-                    'FICHA ECOCARDIOGRAMA DOPPLER DE STRESS', // Texto abaixo da imagem
+                    'FICHA ECOCARDIOGRAMA DOPPLER DE STRESS',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 16,
@@ -114,7 +122,6 @@ class _LoginPageState extends State<LoginPage> {
                         ElevatedButton(
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
-                              // Se as credenciais forem válidas, navegue para a rota '/user_form'
                               if (_validateCredentials()) {
                                 Navigator.pushNamed(context, '/user_form');
                               } else {
