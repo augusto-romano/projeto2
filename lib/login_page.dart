@@ -27,7 +27,7 @@ class _LoginPageState extends State<LoginPage> {
         _credentials = json.decode(data);
       });
     } catch (e) {
-      print('Failed to load credentials: $e');
+      print('Falha ao carregar as credenciais: $e');
     }
   }
 
@@ -35,12 +35,19 @@ class _LoginPageState extends State<LoginPage> {
     String username = _usernameController.text.trim();
     String password = _passwordController.text.trim();
 
+    print('Username inserido: $username');
+    print('Password inserido: $password');
+    print('Credenciais carregadas: $_credentials');
+
+    // Verificar se os valores inseridos correspondem às credenciais carregadas
     if (username == _credentials['username'] &&
         password == _credentials['password']) {
+      print('Credenciais válidas');
       return true;
+    } else {
+      print('Credenciais inválidas');
+      return false;
     }
-
-    return false;
   }
 
   @override
@@ -123,7 +130,7 @@ class _LoginPageState extends State<LoginPage> {
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
                               if (_validateCredentials()) {
-                                Navigator.pushNamed(context, '/user_form');
+                                Navigator.pushNamed(context, '/tela1');
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
