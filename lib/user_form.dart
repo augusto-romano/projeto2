@@ -66,7 +66,7 @@ class _UserFormState extends State<UserForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('FICHA ECOCARDIOGRAMA'),
+        title: Text('FICHA ECOCARDIOGRAMA '),
       ),
       body: Container(
         decoration: BoxDecoration(
