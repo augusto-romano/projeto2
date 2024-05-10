@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:printing/printing.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:pdf/pdf.dart';
+import 'package:teste/historico_screen.dart';
 import 'package:teste/login_page.dart';
+import 'package:teste/historico_screen.dart';
 import 'user_form.dart';
 import 'pdf_creator.dart';
 
@@ -19,6 +21,7 @@ class MyApp extends StatelessWidget {
         '/tela1': (context) =>
             Material(child: UserForm()), // Envolver UserForm com Material
         '/tela2': (context) => LoginPage(),
+        'tela3': (context) => HistoricoScreen(),
       },
     );
   }

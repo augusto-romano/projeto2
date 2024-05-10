@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:teste/conexao.dart';
+import 'package:teste/historico_screen.dart';
 import 'package:teste/pdf_creator.dart';
 
 class FormData {
@@ -259,6 +260,30 @@ class _UserFormState extends State<UserForm> {
                     ),
                   ),
                   child: Text('ENVIAR'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => HistoricoScreen()),
+                    );
+                  },
+                  style: TextButton.styleFrom(
+                    minimumSize: Size(180, 60),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    backgroundColor: const Color.fromARGB(
+                        255, 255, 255, 255), // Cor de fundo
+                    padding: EdgeInsets.symmetric(
+                        vertical: 15), // Espaçamento interno
+                  ),
+                  child: Text(
+                    'VER HISTÓRICO',
+                    style: TextStyle(
+                        color: Color.fromARGB(255, 252, 4, 4)), // Cor do texto
+                  ),
                 ),
               ],
             ),
