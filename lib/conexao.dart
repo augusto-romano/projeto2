@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
+// conexao.dart
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:teste/user_form.dart';
+import 'form_data.dart'; // Importa a classe FormData
 
 class Conexao {
   static const _dbname = "hospital.db";
@@ -38,25 +38,32 @@ class Conexao {
     );
   }
 
-  Future<Database> getDatabase() async {
-    return openDatabase(
-      join(await getDatabasesPath(), _dbname),
-      onCreate: (db, version) {
-        return db.execute(_sqlScript);
-      },
-      version: 1,
+  Future<void> insertForm(FormData formData) async {
+    final db = await database;
+    await db.insert(
+      table,
+      formData.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
 
-  insertForm(FormData formData) {}
-}
+  Future<List<FormData>> getAllForms() async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(table);
 
-Future<void> insertForm(FormData formData) async {
-  var instance;
-  final Database db = await instance.database;
-  await db.insert(
-    Conexao.table,
-    formData.toMap(),
-    conflictAlgorithm: ConflictAlgorithm.replace,
-  );
+    return List.generate(maps.length, (i) {
+      return FormData(
+        id: maps[i][columnId],
+        nome: maps[i][columnNome],
+        idade: maps[i][columnIdade],
+        medico: maps[i][columnNome_Medico],
+        telefone: maps[i][columnTelefone],
+        convenio: maps[i][columnConvenio],
+        exames: maps[i][columnExames],
+        medicacao: maps[i][columnMedicacao],
+        glaucoma: maps[i][columnGlaucoma] == 1,
+        prostata: maps[i][columnProstata] == 1,
+      );
+    });
+  }
 }

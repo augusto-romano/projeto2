@@ -1,45 +1,9 @@
+// user_form.dart
 import 'package:flutter/material.dart';
 import 'package:teste/conexao.dart';
 import 'package:teste/historico_screen.dart';
 import 'package:teste/pdf_creator.dart';
-
-class FormData {
-  final String nome;
-  final String idade;
-  final String medico;
-  final String telefone;
-  final String convenio;
-  final String exames;
-  final String medicacao;
-  final bool glaucoma;
-  final bool prostata;
-
-  FormData({
-    required this.nome,
-    required this.idade,
-    required this.medico,
-    required this.telefone,
-    required this.convenio,
-    required this.exames,
-    required this.medicacao,
-    required this.glaucoma,
-    required this.prostata,
-  });
-
-  Map<String, dynamic> toMap() {
-    return {
-      Conexao.columnNome: nome,
-      Conexao.columnIdade: idade,
-      Conexao.columnNome_Medico: medico,
-      Conexao.columnTelefone: telefone,
-      Conexao.columnConvenio: convenio,
-      Conexao.columnExames: exames,
-      Conexao.columnMedicacao: medicacao,
-      Conexao.columnGlaucoma: glaucoma ? 1 : 0,
-      Conexao.columnProstata: prostata ? 1 : 0,
-    };
-  }
-}
+import 'package:teste/form_data.dart'; // Importa a classe FormData
 
 class UserForm extends StatefulWidget {
   @override
@@ -56,18 +20,14 @@ class _UserFormState extends State<UserForm> {
   final TextEditingController _examesController = TextEditingController();
   final TextEditingController _medicacaoController = TextEditingController();
 
-  String? _queixaAtual;
-  String? _peso;
   bool _glaucoma = false;
   bool _prostata = false;
-
-  String? get info => null;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('FICHA ECOCARDIOGRAMA '),
+        title: Text('FICHA ECOCARDIOGRAMA'),
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -186,8 +146,6 @@ class _UserFormState extends State<UserForm> {
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();
-                      String glaucomaText = _glaucoma ? 'Sim' : 'Não';
-                      String prostataText = _prostata ? 'Sim' : 'Não';
 
                       // Criar um objeto FormData
                       FormData formData = FormData(
@@ -202,30 +160,6 @@ class _UserFormState extends State<UserForm> {
                         prostata: _prostata,
                       );
 
-                      // Imprimir os dados para verificação
-                      print('Nome: ${formData.nome}');
-                      print('Idade: ${formData.idade}');
-                      print('Médico: ${formData.medico}');
-                      print('Telefone: ${formData.telefone}');
-                      print('Convênio: ${formData.convenio}');
-                      print('Exames: ${formData.exames}');
-                      print('Medicação: ${formData.medicacao}');
-                      print('Possui glaucoma? $glaucomaText');
-                      print('Problemas de próstata? $prostataText');
-
-                      String info = '';
-
-                      // Adicionar as informações à variável com quebras de linha entre os campos
-                      info += 'Nome: ${formData.nome}\n\n';
-                      info += 'Idade: ${formData.idade}\n\n';
-                      info += 'Médico: ${formData.medico}\n\n';
-                      info += 'Telefone: ${formData.telefone}\n\n';
-                      info += 'Convênio: ${formData.convenio}\n\n';
-                      info += 'Exames: ${formData.exames}\n\n';
-                      info += 'Medicação: ${formData.medicacao}\n\n';
-                      info += 'Possui glaucoma? $glaucomaText\n\n';
-                      info += 'Problemas de próstata? $prostataText\n\n';
-
                       // Inserir no banco de dados
                       await Conexao.instance.insertForm(formData);
 
@@ -235,7 +169,17 @@ class _UserFormState extends State<UserForm> {
                         builder: (BuildContext context) {
                           return AlertDialog(
                             title: const Text('CONFIRA AS INFORMAÇÕES'),
-                            content: Text(info!),
+                            content: Text(
+                              'Nome: ${formData.nome}\n'
+                              'Idade: ${formData.idade}\n'
+                              'Médico: ${formData.medico}\n'
+                              'Telefone: ${formData.telefone}\n'
+                              'Convênio: ${formData.convenio}\n'
+                              'Exames: ${formData.exames}\n'
+                              'Medicação: ${formData.medicacao}\n'
+                              'Possui glaucoma? ${formData.glaucoma ? "Sim" : "Não"}\n'
+                              'Problemas de próstata? ${formData.prostata ? "Sim" : "Não"}',
+                            ),
                             actions: <Widget>[
                               TextButton(
                                 child: const Text('OK'),
@@ -245,7 +189,17 @@ class _UserFormState extends State<UserForm> {
                               ),
                               TextButton(
                                 child: const Text('SALVAR PDF'),
-                                onPressed: () => printDoc(info!),
+                                onPressed: () => printDoc(
+                                  'Nome: ${formData.nome}\n'
+                                  'Idade: ${formData.idade}\n'
+                                  'Médico: ${formData.medico}\n'
+                                  'Telefone: ${formData.telefone}\n'
+                                  'Convênio: ${formData.convenio}\n'
+                                  'Exames: ${formData.exames}\n'
+                                  'Medicação: ${formData.medicacao}\n'
+                                  'Possui glaucoma? ${formData.glaucoma ? "Sim" : "Não"}\n'
+                                  'Problemas de próstata? ${formData.prostata ? "Sim" : "Não"}',
+                                ),
                               ),
                             ],
                           );
@@ -274,15 +228,12 @@ class _UserFormState extends State<UserForm> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
-                    backgroundColor: const Color.fromARGB(
-                        255, 255, 255, 255), // Cor de fundo
-                    padding: EdgeInsets.symmetric(
-                        vertical: 15), // Espaçamento interno
+                    backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+                    padding: EdgeInsets.symmetric(vertical: 15),
                   ),
                   child: Text(
                     'VER HISTÓRICO',
-                    style: TextStyle(
-                        color: Color.fromARGB(255, 252, 4, 4)), // Cor do texto
+                    style: TextStyle(color: Color.fromARGB(255, 252, 4, 4)),
                   ),
                 ),
               ],
