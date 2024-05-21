@@ -1,4 +1,3 @@
-// user_form.dart
 import 'package:flutter/material.dart';
 import 'package:teste/conexao.dart';
 import 'package:teste/form_data.dart';
@@ -191,23 +190,24 @@ class _UserFormState extends State<UserForm> {
                         await Conexao.instance.updateForm(formData);
                       }
 
+                      // Criar a variável info com as informações do formulário
+                      String info = 'Nome: ${formData.nome}\n\n'
+                          'Idade: ${formData.idade}\n\n'
+                          'Médico: ${formData.medico}\n\n'
+                          'Telefone: ${formData.telefone}\n\n'
+                          'Convênio: ${formData.convenio}\n\n'
+                          'Exames: ${formData.exames}\n\n'
+                          'Medicação: ${formData.medicacao}\n\n'
+                          'Possui glaucoma? $glaucomaText\n\n'
+                          'Problemas de próstata? $prostataText';
+
                       // Mostrar diálogo de confirmação
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
                             title: const Text('CONFIRA AS INFORMAÇÕES'),
-                            content: Text(
-                              'Nome: ${formData.nome}\n'
-                              'Idade: ${formData.idade}\n'
-                              'Médico: ${formData.medico}\n'
-                              'Telefone: ${formData.telefone}\n'
-                              'Convênio: ${formData.convenio}\n'
-                              'Exames: ${formData.exames}\n'
-                              'Medicação: ${formData.medicacao}\n'
-                              'Possui glaucoma? $glaucomaText\n'
-                              'Problemas de próstata? $prostataText',
-                            ),
+                            content: Text(info),
                             actions: <Widget>[
                               TextButton(
                                 child: const Text('OK'),
@@ -217,7 +217,7 @@ class _UserFormState extends State<UserForm> {
                               ),
                               TextButton(
                                 child: const Text('SALVAR PDF'),
-                                onPressed: () => printDoc(formData.toString()),
+                                onPressed: () => printDoc(info),
                               ),
                             ],
                           );
