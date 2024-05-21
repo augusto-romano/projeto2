@@ -1,11 +1,15 @@
 // user_form.dart
 import 'package:flutter/material.dart';
 import 'package:teste/conexao.dart';
+import 'package:teste/form_data.dart';
 import 'package:teste/historico_screen.dart';
 import 'package:teste/pdf_creator.dart';
-import 'package:teste/form_data.dart'; // Importa a classe FormData
 
 class UserForm extends StatefulWidget {
+  final FormData? formData;
+
+  UserForm({this.formData});
+
   @override
   _UserFormState createState() => _UserFormState();
 }
@@ -24,10 +28,27 @@ class _UserFormState extends State<UserForm> {
   bool _prostata = false;
 
   @override
+  void initState() {
+    super.initState();
+    if (widget.formData != null) {
+      _nameController.text = widget.formData!.nome;
+      _ageController.text = widget.formData!.idade;
+      _medicoController.text = widget.formData!.medico;
+      _telefoneController.text = widget.formData!.telefone;
+      _convenioController.text = widget.formData!.convenio;
+      _examesController.text = widget.formData!.exames;
+      _medicacaoController.text = widget.formData!.medicacao;
+      _glaucoma = widget.formData!.glaucoma;
+      _prostata = widget.formData!.prostata;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('FICHA ECOCARDIOGRAMA'),
+        title: Text(
+            widget.formData == null ? 'Adicionar Paciente' : 'Editar Paciente'),
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -146,9 +167,12 @@ class _UserFormState extends State<UserForm> {
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();
+                      String glaucomaText = _glaucoma ? 'Sim' : 'Não';
+                      String prostataText = _prostata ? 'Sim' : 'Não';
 
                       // Criar um objeto FormData
                       FormData formData = FormData(
+                        id: widget.formData?.id,
                         nome: _nameController.text,
                         idade: _ageController.text,
                         medico: _medicoController.text,
@@ -160,8 +184,12 @@ class _UserFormState extends State<UserForm> {
                         prostata: _prostata,
                       );
 
-                      // Inserir no banco de dados
-                      await Conexao.instance.insertForm(formData);
+                      // Inserir ou atualizar no banco de dados
+                      if (widget.formData == null) {
+                        await Conexao.instance.insertForm(formData);
+                      } else {
+                        await Conexao.instance.updateForm(formData);
+                      }
 
                       // Mostrar diálogo de confirmação
                       showDialog(
@@ -177,8 +205,8 @@ class _UserFormState extends State<UserForm> {
                               'Convênio: ${formData.convenio}\n'
                               'Exames: ${formData.exames}\n'
                               'Medicação: ${formData.medicacao}\n'
-                              'Possui glaucoma? ${formData.glaucoma ? "Sim" : "Não"}\n'
-                              'Problemas de próstata? ${formData.prostata ? "Sim" : "Não"}',
+                              'Possui glaucoma? $glaucomaText\n'
+                              'Problemas de próstata? $prostataText',
                             ),
                             actions: <Widget>[
                               TextButton(
@@ -189,17 +217,7 @@ class _UserFormState extends State<UserForm> {
                               ),
                               TextButton(
                                 child: const Text('SALVAR PDF'),
-                                onPressed: () => printDoc(
-                                  'Nome: ${formData.nome}\n'
-                                  'Idade: ${formData.idade}\n'
-                                  'Médico: ${formData.medico}\n'
-                                  'Telefone: ${formData.telefone}\n'
-                                  'Convênio: ${formData.convenio}\n'
-                                  'Exames: ${formData.exames}\n'
-                                  'Medicação: ${formData.medicacao}\n'
-                                  'Possui glaucoma? ${formData.glaucoma ? "Sim" : "Não"}\n'
-                                  'Problemas de próstata? ${formData.prostata ? "Sim" : "Não"}',
-                                ),
+                                onPressed: () => printDoc(formData.toString()),
                               ),
                             ],
                           );
@@ -213,7 +231,7 @@ class _UserFormState extends State<UserForm> {
                       borderRadius: BorderRadius.circular(30),
                     ),
                   ),
-                  child: Text('ENVIAR'),
+                  child: Text(widget.formData == null ? 'ENVIAR' : 'ATUALIZAR'),
                 ),
                 TextButton(
                   onPressed: () {
@@ -228,12 +246,15 @@ class _UserFormState extends State<UserForm> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
-                    backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-                    padding: EdgeInsets.symmetric(vertical: 15),
+                    backgroundColor: const Color.fromARGB(
+                        255, 255, 255, 255), // Cor de fundo
+                    padding: EdgeInsets.symmetric(
+                        vertical: 15), // Espaçamento interno
                   ),
                   child: Text(
                     'VER HISTÓRICO',
-                    style: TextStyle(color: Color.fromARGB(255, 252, 4, 4)),
+                    style: TextStyle(
+                        color: Color.fromARGB(255, 252, 4, 4)), // Cor do texto
                   ),
                 ),
               ],

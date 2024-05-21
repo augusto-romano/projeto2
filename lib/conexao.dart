@@ -1,7 +1,8 @@
 // conexao.dart
+import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import 'form_data.dart'; // Importa a classe FormData
+import 'package:teste/form_data.dart';
 
 class Conexao {
   static const _dbname = "hospital.db";
@@ -38,32 +39,51 @@ class Conexao {
     );
   }
 
-  Future<void> insertForm(FormData formData) async {
-    final db = await database;
-    await db.insert(
+  Future<int> insertForm(FormData formData) async {
+    final db = await instance.database;
+    return await db.insert(
       table,
       formData.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
 
-  Future<List<FormData>> getAllForms() async {
-    final db = await database;
+  Future<List<FormData>> getForms() async {
+    final db = await instance.database;
     final List<Map<String, dynamic>> maps = await db.query(table);
 
     return List.generate(maps.length, (i) {
       return FormData(
-        id: maps[i][columnId],
-        nome: maps[i][columnNome],
-        idade: maps[i][columnIdade],
-        medico: maps[i][columnNome_Medico],
-        telefone: maps[i][columnTelefone],
-        convenio: maps[i][columnConvenio],
-        exames: maps[i][columnExames],
-        medicacao: maps[i][columnMedicacao],
-        glaucoma: maps[i][columnGlaucoma] == 1,
-        prostata: maps[i][columnProstata] == 1,
+        id: maps[i]['id'],
+        nome: maps[i]['nome'],
+        idade: maps[i]['idade'],
+        medico: maps[i]['medico'],
+        telefone: maps[i]['telefone'],
+        convenio: maps[i]['convenio'],
+        exames: maps[i]['exames'],
+        medicacao: maps[i]['medicacao'],
+        glaucoma: maps[i]['glaucoma'] == 1,
+        prostata: maps[i]['prostata'] == 1,
       );
     });
+  }
+
+  Future<int> updateForm(FormData formData) async {
+    final db = await instance.database;
+    return await db.update(
+      table,
+      formData.toMap(),
+      where: '$columnId = ?',
+      whereArgs: [formData.id],
+    );
+  }
+
+  Future<int> deleteForm(int id) async {
+    final db = await instance.database;
+    return await db.delete(
+      table,
+      where: '$columnId = ?',
+      whereArgs: [id],
+    );
   }
 }
