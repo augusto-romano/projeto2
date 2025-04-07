@@ -1,16 +1,3 @@
-# projeto2
-
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Sistema de ficha cadastral mobile
+O sistema consiste em acelerar o processo de preenchenminto de uma ficha cadastral do paciente e fazer uma exportação em PDF, podendo ser enviado direto para a impressora.
+O app foi feito para o Instituto Cardiologio de Ourinhos - ICO
